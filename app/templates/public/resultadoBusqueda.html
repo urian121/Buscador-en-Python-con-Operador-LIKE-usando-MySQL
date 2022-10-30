@@ -1,0 +1,32 @@
+{% block body %}
+
+<div id="resultado" class="text-center">
+    <h4 class="text-center">Total de Resultado {{ total }}<hr></h4>
+    {% if (miData) %}    <!--Si existe-->
+
+        {% for data in miData %}
+        <ul>
+        {{ loop.index }}
+        <li>
+            Nombre y Apellido: <strong>{{ data.nombre }} {{ data.apellido }} </strong>               
+        </li>
+        <li>
+            Email: <strong>{{ data.email }}</strong>            
+        </li>
+        <li>
+            Fecha de Ingreso: <strong>{{ data.fecha_ingreso }}</strong>            
+        </li>
+    </ul>
+      {% endfor %}
+   
+        
+
+    {% else %}
+    <p>No hay resultados para la busqueda:
+        <strong class="busq colorCrimson"> {{ busqueda }}</strong>
+    </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

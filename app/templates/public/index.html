@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador con Python - Flask & MySQL</title>
+  <link rel="icon" href="{{url_for('static', filename ='assets/imgs/favicon.ico')}}" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/home.css') }}">
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <a href="/">
+        <i class="bi bi-code-slash"></i>
+      </a>
+    </div>
+    <nav>
+      <div class="search-bar">
+        <form name="formSearch" id="formSearch" method="POST" action="" class="search" autocomplete="off">
+          <input type="search" name="buscar" id="buscar" class="search__input"
+            placeholder="Buscador con Python - Flask & MySQL">
+          <button type="submit" id="btnBuscar" class="search__btn">
+            <i class="bi bi-search search__icon"></i>
+            Buscar
+          </button>
+        </form>
+      </div>
+    </nav>
+    <div class="menu">
+      <i class="ion-drag menu__icon"></i>
+    </div>
+  </header>
+
+
+  {% block body %}
+
+  <div id="RespBusq">
+    <h1 class="text-center">
+      Buscador con PYHTON
+    </h1>
+  </div>
+
+  {% endblock %}
+
+
+  <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename ='assets/js/home.js') }}"></script>
+  {% block customJS %}
+  <script>
+    let formSearch = document.querySelector('#formSearch');
+    formSearch.addEventListener('submit', validaForm);
+
+    /*Función para validar que el formulario no llegue vacio*/
+    function validaForm(e) {
+      e.preventDefault();
+
+      let inputBuscar = document.querySelector('#buscar');
+      inputValorBuscar = inputBuscar.value;
+      //console.log(inputValorBuscar)
+      if (inputValorBuscar == '') {
+        //console.log('Estoy vacia');
+        document.querySelector('#buscar').classList.add('input_vacio');
+        return;
+      }
+      /* Si todo va bien, ejecuto la funcion busqueda */
+      busqueda(inputValorBuscar);
+    }
+
+
+    /**Función para busqueda*/
+    function busqueda(inputValorBuscar) {
+      console.log(inputValorBuscar);
+
+
+
+
+      var urlForm = "{{ url_for('BuscarEmpleado') }}";
+      $.ajax({
+        type: "POST",
+        data: { buscar: inputValorBuscar },
+        url: urlForm,
+        beforeSend: function () {
+          console.log('Cargando operacion');
+          const btnBuscar = document.querySelector('#btnBuscar');
+          btnBuscar.disabled = true; //Desabilito el input par que no escriban
+          btnBuscar.style.opacity = 0.8;
+          btnBuscar.innerHTML = `<span class="spinner_loader"></span> Buscando...`;
+        },
+        complete: function (data) {
+          const btnBuscar = document.querySelector('#btnBuscar');
+          btnBuscar.disabled = false; //Desabilito el input par que no escriban
+          btnBuscar.style.opacity = 10;
+          btnBuscar.innerHTML = `<i class="bi bi-search search__icon"></i> Buscar`;
+          console.log('Peticion completada');
+        },
+        success: function (resp) {
+          console.log(resp);
+          $('#RespBusq').html(resp);
+        },
+        error: function () {
+          alert("error petición ajax  😭");
+        },
+      });
+    }
+  </script>
+  {% endblock %}
+
+
+</body>
+</html>
